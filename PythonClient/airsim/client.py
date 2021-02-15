@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import logging
-from typing import cast, List
+from typing import List
 
 import msgpackrpc
 
@@ -129,7 +129,8 @@ class VehicleClient:
         Returns:
             GeoPoint: Home location of the vehicle
         """
-        return cast(GeoPoint, GeoPoint.from_msgpack(self.client.call('getHomeGeoPoint', vehicle_name)))
+        return GeoPoint.from_msgpack(self.client.call('getHomeGeoPoint', vehicle_name))
+    getHomeGeoPoint.__annotations__ = {'return': GeoPoint}
 
     def confirmConnection(self):
         """
@@ -261,7 +262,8 @@ class VehicleClient:
             list[ImageResponse]:
         """
         responses_raw = self.client.call('simGetImages', requests, vehicle_name)
-        return cast(List[ImageResponse], [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw])
+        return [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+    simGetImages.__annotations__ = {'return': List[ImageResponse]}
 
     def simRunConsoleCommand(self, command):
         """
@@ -288,7 +290,8 @@ class VehicleClient:
             list[MeshPositionVertexBuffersResponse]:
         """
         responses_raw = self.client.call('simGetMeshPositionVertexBuffers')
-        return cast(List[MeshPositionVertexBuffersResponse], [MeshPositionVertexBuffersResponse.from_msgpack(response_raw) for response_raw in responses_raw])
+        return [MeshPositionVertexBuffersResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+    simGetMeshPositionVertexBuffers.__annotations__ = {'return': List[MeshPositionVertexBuffersResponse]}
 
     def simGetCollisionInfo(self, vehicle_name = ''):
         """
@@ -298,7 +301,8 @@ class VehicleClient:
         Returns:
             CollisionInfo:
         """
-        return cast(CollisionInfo, CollisionInfo.from_msgpack(self.client.call('simGetCollisionInfo', vehicle_name)))
+        return CollisionInfo.from_msgpack(self.client.call('simGetCollisionInfo', vehicle_name))
+    simGetCollisionInfo.__annotations__ = {'return': CollisionInfo}
 
     def simSetVehiclePose(self, pose, ignore_collison, vehicle_name = ''):
         """
@@ -322,7 +326,8 @@ class VehicleClient:
             Pose:
         """
         pose = self.client.call('simGetVehiclePose', vehicle_name)
-        return cast(Pose, Pose.from_msgpack(pose))
+        return Pose.from_msgpack(pose)
+    simGetVehiclePose.__annotations__ = {'return': Pose}
 
     def simSetTraceLine(self, color_rgba, thickness=1.0, vehicle_name = ''):
         """
@@ -346,7 +351,8 @@ class VehicleClient:
             Pose:
         """
         pose = self.client.call('simGetObjectPose', object_name)
-        return cast(Pose, Pose.from_msgpack(pose))
+        return Pose.from_msgpack(pose)
+    simGetObjectPose.__annotations__ = {'return': Pose}
 
     def simSetObjectPose(self, object_name, pose, teleport = True):
         """
@@ -376,7 +382,8 @@ class VehicleClient:
             airsim.Vector3r: Scale
         """
         scale = self.client.call('simGetObjectScale', object_name)
-        return cast(Vector3r, Vector3r.from_msgpack(scale))
+        return Vector3r.from_msgpack(scale)
+    simGetObjectScale.__annotations__ = {'return': Vector3r}
 
     def simSetObjectScale(self, object_name, scale_vector):
         """
@@ -488,7 +495,8 @@ class VehicleClient:
             CameraInfo:
         """
         # TODO: below str() conversion is only needed for legacy reason and should be removed in future
-        return cast(CameraInfo, CameraInfo.from_msgpack(self.client.call('simGetCameraInfo', str(camera_name), vehicle_name)))
+        return CameraInfo.from_msgpack(self.client.call('simGetCameraInfo', str(camera_name), vehicle_name))
+    simGetCameraInfo.__annotations__ = {'return': CameraInfo}
 
     def simGetDistortionParams(self, camera_name, vehicle_name = ''):
         """
@@ -607,7 +615,8 @@ class VehicleClient:
         Returns:
             ImuData:
         """
-        return cast(ImuData, ImuData.from_msgpack(self.client.call('getImuData', imu_name, vehicle_name)))
+        return ImuData.from_msgpack(self.client.call('getImuData', imu_name, vehicle_name))
+    getImuData.__annotations__ = {'return': ImuData}
 
     def getBarometerData(self, barometer_name = '', vehicle_name = ''):
         """
@@ -618,7 +627,8 @@ class VehicleClient:
         Returns:
             BarometerData:
         """
-        return cast(BarometerData, BarometerData.from_msgpack(self.client.call('getBarometerData', barometer_name, vehicle_name)))
+        return BarometerData.from_msgpack(self.client.call('getBarometerData', barometer_name, vehicle_name))
+    getBarometerData.__annotations__ = {'return': BarometerData}
 
     def getMagnetometerData(self, magnetometer_name = '', vehicle_name = ''):
         """
@@ -629,7 +639,8 @@ class VehicleClient:
         Returns:
             MagnetometerData:
         """
-        return cast(MagnetometerData, MagnetometerData.from_msgpack(self.client.call('getMagnetometerData', magnetometer_name, vehicle_name)))
+        return MagnetometerData.from_msgpack(self.client.call('getMagnetometerData', magnetometer_name, vehicle_name))
+    getMagnetometerData.__annotations__ = {'return': MagnetometerData}
 
     def getGpsData(self, gps_name = '', vehicle_name = ''):
         """
@@ -640,7 +651,8 @@ class VehicleClient:
         Returns:
             GpsData:
         """
-        return cast(GpsData, GpsData.from_msgpack(self.client.call('getGpsData', gps_name, vehicle_name)))
+        return GpsData.from_msgpack(self.client.call('getGpsData', gps_name, vehicle_name))
+    getGpsData.__annotations__ = {'return': GpsData}
 
     def getDistanceSensorData(self, distance_sensor_name = '', vehicle_name = ''):
         """
@@ -651,7 +663,8 @@ class VehicleClient:
         Returns:
             DistanceSensorData:
         """
-        return cast(DistanceSensorData, DistanceSensorData.from_msgpack(self.client.call('getDistanceSensorData', distance_sensor_name, vehicle_name)))
+        return DistanceSensorData.from_msgpack(self.client.call('getDistanceSensorData', distance_sensor_name, vehicle_name))
+    getDistanceSensorData.__annotations__ = {'return': DistanceSensorData}
 
     def getLidarData(self, lidar_name = '', vehicle_name = ''):
         """
@@ -662,7 +675,8 @@ class VehicleClient:
         Returns:
             LidarData:
         """
-        return cast(LidarData, LidarData.from_msgpack(self.client.call('getLidarData', lidar_name, vehicle_name)))
+        return LidarData.from_msgpack(self.client.call('getLidarData', lidar_name, vehicle_name))
+    getLidarData.__annotations__ = {'return': LidarData}
 
     def simGetLidarSegmentation(self, lidar_name = '', vehicle_name = ''):
         """
@@ -1361,7 +1375,8 @@ class CarClient(VehicleClient, object):
             CarState:
         """
         state_raw = self.client.call('getCarState', vehicle_name)
-        return cast(CarState, CarState.from_msgpack(state_raw))
+        return CarState.from_msgpack(state_raw)
+    getCarState.__annotations__ = {'return': CarState}
 
     def getCarControls(self, vehicle_name=''):
         """
@@ -1372,4 +1387,5 @@ class CarClient(VehicleClient, object):
             CarControls:
         """
         controls_raw = self.client.call('getCarControls', vehicle_name)
-        return cast(CarControls, CarControls.from_msgpack(controls_raw))
+        return CarControls.from_msgpack(controls_raw)
+    getCarControls.__annotations__ = {'return': CarControls}
