@@ -1,7 +1,9 @@
 from __future__ import print_function
-import msgpackrpc #install as admin: pip install msgpack-rpc-python
-import numpy as np #pip install numpy
+
 import math
+
+import numpy as np
+
 
 class MsgpackMixin:
     def __repr__(self):
@@ -447,7 +449,7 @@ class PIDGains():
     """
     Struct to store values of PID gains. Used to transmit controller gain values while instantiating
     AngleLevel/AngleRate/Velocity/PositionControllerGains objects.
-    
+
     Attributes:
         kP (float): Proportional gain
         kI (float): Integrator gain
@@ -464,7 +466,7 @@ class PIDGains():
 class AngleRateControllerGains():
     """
     Struct to contain controller gains used by angle level PID controller
-    
+
     Attributes:
         roll_gains (PIDGains): kP, kI, kD for roll axis
         pitch_gains (PIDGains): kP, kI, kD for pitch axis
@@ -476,14 +478,14 @@ class AngleRateControllerGains():
         self.roll_gains = roll_gains
         self.pitch_gains = pitch_gains
         self.yaw_gains = yaw_gains
-    
+
     def to_lists(self):
         return [self.roll_gains.kp, self.pitch_gains.kp, self.yaw_gains.kp], [self.roll_gains.ki, self.pitch_gains.ki, self.yaw_gains.ki], [self.roll_gains.kd, self.pitch_gains.kd, self.yaw_gains.kd]
 
 class AngleLevelControllerGains():
     """
     Struct to contain controller gains used by angle rate PID controller
-    
+
     Attributes:
         roll_gains (PIDGains): kP, kI, kD for roll axis
         pitch_gains (PIDGains): kP, kI, kD for pitch axis
@@ -495,14 +497,14 @@ class AngleLevelControllerGains():
         self.roll_gains = roll_gains
         self.pitch_gains = pitch_gains
         self.yaw_gains = yaw_gains
-    
+
     def to_lists(self):
         return [self.roll_gains.kp, self.pitch_gains.kp, self.yaw_gains.kp], [self.roll_gains.ki, self.pitch_gains.ki, self.yaw_gains.ki], [self.roll_gains.kd, self.pitch_gains.kd, self.yaw_gains.kd]
 
 class VelocityControllerGains():
     """
     Struct to contain controller gains used by velocity PID controller
-    
+
     Attributes:
         x_gains (PIDGains): kP, kI, kD for X axis
         y_gains (PIDGains): kP, kI, kD for Y axis
@@ -514,14 +516,14 @@ class VelocityControllerGains():
         self.x_gains = x_gains
         self.y_gains = y_gains
         self.z_gains = z_gains
-    
+
     def to_lists(self):
         return [self.x_gains.kp, self.y_gains.kp, self.z_gains.kp], [self.x_gains.ki, self.y_gains.ki, self.z_gains.ki], [self.x_gains.kd, self.y_gains.kd, self.z_gains.kd]
 
 class PositionControllerGains():
     """
     Struct to contain controller gains used by position PID controller
-    
+
     Attributes:
         x_gains (PIDGains): kP, kI, kD for X axis
         y_gains (PIDGains): kP, kI, kD for Y axis
@@ -533,7 +535,7 @@ class PositionControllerGains():
         self.x_gains = x_gains
         self.y_gains = y_gains
         self.z_gains = z_gains
-    
+
     def to_lists(self):
         return [self.x_gains.kp, self.y_gains.kp, self.z_gains.kp], [self.x_gains.ki, self.y_gains.ki, self.z_gains.ki], [self.x_gains.kd, self.y_gains.kd, self.z_gains.kd]
 

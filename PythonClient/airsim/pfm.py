@@ -1,8 +1,7 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import re
 import sys
-import pdb
+
+import numpy as np
 
 
 def read_pfm(file):
@@ -50,7 +49,7 @@ def read_pfm(file):
     data = np.reshape(data, shape)
     # DEY: I don't know why this was there.
     file.close()
-    
+
     return data, scale
 
 

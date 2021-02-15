@@ -1,14 +1,13 @@
 from __future__ import print_function
 
-from .utils import *
-from .types import *
-
-import msgpackrpc #install as admin: pip install msgpack-rpc-python
-import numpy as np #pip install numpy
-import msgpack
-import time
-import math
 import logging
+from typing import cast, List
+
+import msgpackrpc
+
+from airsim.types import *
+from airsim.utils import *
+
 
 class VehicleClient:
     def __init__(self, ip = "", port = 41451, timeout_value = 3600):
@@ -110,7 +109,7 @@ class VehicleClient:
             seconds (float): Time to run the simulation for
         """
         self.client.call('simContinueForTime', seconds)
-    
+
     def simContinueForFrames(self, frames):
         """
         Continue (or resume if paused) the simulation for the specified number of frames, after which the simulation will be paused.
@@ -130,7 +129,7 @@ class VehicleClient:
         Returns:
             GeoPoint: Home location of the vehicle
         """
-        return GeoPoint.from_msgpack(self.client.call('getHomeGeoPoint', vehicle_name))
+        return cast(GeoPoint, GeoPoint.from_msgpack(self.client.call('getHomeGeoPoint', vehicle_name)))
 
     def confirmConnection(self):
         """
@@ -262,7 +261,7 @@ class VehicleClient:
             list[ImageResponse]:
         """
         responses_raw = self.client.call('simGetImages', requests, vehicle_name)
-        return [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+        return cast(List[ImageResponse], [ImageResponse.from_msgpack(response_raw) for response_raw in responses_raw])
 
     def simRunConsoleCommand(self, command):
         """
@@ -289,7 +288,7 @@ class VehicleClient:
             list[MeshPositionVertexBuffersResponse]:
         """
         responses_raw = self.client.call('simGetMeshPositionVertexBuffers')
-        return [MeshPositionVertexBuffersResponse.from_msgpack(response_raw) for response_raw in responses_raw]
+        return cast(List[MeshPositionVertexBuffersResponse], [MeshPositionVertexBuffersResponse.from_msgpack(response_raw) for response_raw in responses_raw])
 
     def simGetCollisionInfo(self, vehicle_name = ''):
         """
@@ -299,7 +298,7 @@ class VehicleClient:
         Returns:
             CollisionInfo:
         """
-        return CollisionInfo.from_msgpack(self.client.call('simGetCollisionInfo', vehicle_name))
+        return cast(CollisionInfo, CollisionInfo.from_msgpack(self.client.call('simGetCollisionInfo', vehicle_name)))
 
     def simSetVehiclePose(self, pose, ignore_collison, vehicle_name = ''):
         """
@@ -323,7 +322,7 @@ class VehicleClient:
             Pose:
         """
         pose = self.client.call('simGetVehiclePose', vehicle_name)
-        return Pose.from_msgpack(pose)
+        return cast(Pose, Pose.from_msgpack(pose))
 
     def simSetTraceLine(self, color_rgba, thickness=1.0, vehicle_name = ''):
         """
@@ -347,7 +346,7 @@ class VehicleClient:
             Pose:
         """
         pose = self.client.call('simGetObjectPose', object_name)
-        return Pose.from_msgpack(pose)
+        return cast(Pose, Pose.from_msgpack(pose))
 
     def simSetObjectPose(self, object_name, pose, teleport = True):
         """
@@ -377,7 +376,7 @@ class VehicleClient:
             airsim.Vector3r: Scale
         """
         scale = self.client.call('simGetObjectScale', object_name)
-        return Vector3r.from_msgpack(scale)
+        return cast(Vector3r, Vector3r.from_msgpack(scale))
 
     def simSetObjectScale(self, object_name, scale_vector):
         """
@@ -408,13 +407,13 @@ class VehicleClient:
 
     def simSpawnObject(self, object_name, asset_name, pose, scale, physics_enabled=False):
         """Spawned selected object in the world
-        
+
         Args:
             object_name (str): Desired name of new object
             asset_name (str): Name of asset(mesh) in the project database
             pose (airsim.Pose): Desired pose of object
             scale (airsim.Vector3r): Desired scale of object
-        
+
         Returns:
             str: Name of spawned object, in case it had to be modified
         """
@@ -422,10 +421,10 @@ class VehicleClient:
 
     def simDestroyObject(self, object_name):
         """Removes selected object from the world
-        
+
         Args:
             object_name (str): Name of object to be removed
-        
+
         Returns:
             bool: True if object is queued up for removal
         """
@@ -489,7 +488,7 @@ class VehicleClient:
             CameraInfo:
         """
         # TODO: below str() conversion is only needed for legacy reason and should be removed in future
-        return CameraInfo.from_msgpack(self.client.call('simGetCameraInfo', str(camera_name), vehicle_name))
+        return cast(CameraInfo, CameraInfo.from_msgpack(self.client.call('simGetCameraInfo', str(camera_name), vehicle_name)))
 
     def simGetDistortionParams(self, camera_name, vehicle_name = ''):
         """
@@ -502,7 +501,7 @@ class VehicleClient:
         Returns:
             List (float): List of distortion parameter values corresponding to K1, K2, K3, P1, P2 respectively.
         """
-    
+
         return self.client.call('simGetDistortionParams', str(camera_name), vehicle_name)
 
     def simSetDistortionParams(self, camera_name, distortion_params, vehicle_name = ''):
@@ -583,8 +582,7 @@ class VehicleClient:
             KinematicsState: Ground truth of the vehicle
         """
         kinematics_state = self.client.call('simGetGroundTruthKinematics', vehicle_name)
-        return KinematicsState.from_msgpack(kinematics_state)
-    simGetGroundTruthKinematics.__annotations__ = {'return': KinematicsState}
+        return cast(KinematicsState, KinematicsState.from_msgpack(kinematics_state))
 
     def simGetGroundTruthEnvironment(self, vehicle_name = ''):
         """
@@ -597,8 +595,7 @@ class VehicleClient:
             EnvironmentState: Ground truth environment state
         """
         env_state = self.client.call('simGetGroundTruthEnvironment', vehicle_name)
-        return EnvironmentState.from_msgpack(env_state)
-    simGetGroundTruthEnvironment.__annotations__ = {'return': EnvironmentState}
+        return cast(EnvironmentState, EnvironmentState.from_msgpack(env_state))
 
     # sensor APIs
     def getImuData(self, imu_name = '', vehicle_name = ''):
@@ -610,7 +607,7 @@ class VehicleClient:
         Returns:
             ImuData:
         """
-        return ImuData.from_msgpack(self.client.call('getImuData', imu_name, vehicle_name))
+        return cast(ImuData, ImuData.from_msgpack(self.client.call('getImuData', imu_name, vehicle_name)))
 
     def getBarometerData(self, barometer_name = '', vehicle_name = ''):
         """
@@ -621,7 +618,7 @@ class VehicleClient:
         Returns:
             BarometerData:
         """
-        return BarometerData.from_msgpack(self.client.call('getBarometerData', barometer_name, vehicle_name))
+        return cast(BarometerData, BarometerData.from_msgpack(self.client.call('getBarometerData', barometer_name, vehicle_name)))
 
     def getMagnetometerData(self, magnetometer_name = '', vehicle_name = ''):
         """
@@ -632,7 +629,7 @@ class VehicleClient:
         Returns:
             MagnetometerData:
         """
-        return MagnetometerData.from_msgpack(self.client.call('getMagnetometerData', magnetometer_name, vehicle_name))
+        return cast(MagnetometerData, MagnetometerData.from_msgpack(self.client.call('getMagnetometerData', magnetometer_name, vehicle_name)))
 
     def getGpsData(self, gps_name = '', vehicle_name = ''):
         """
@@ -643,7 +640,7 @@ class VehicleClient:
         Returns:
             GpsData:
         """
-        return GpsData.from_msgpack(self.client.call('getGpsData', gps_name, vehicle_name))
+        return cast(GpsData, GpsData.from_msgpack(self.client.call('getGpsData', gps_name, vehicle_name)))
 
     def getDistanceSensorData(self, distance_sensor_name = '', vehicle_name = ''):
         """
@@ -654,7 +651,7 @@ class VehicleClient:
         Returns:
             DistanceSensorData:
         """
-        return DistanceSensorData.from_msgpack(self.client.call('getDistanceSensorData', distance_sensor_name, vehicle_name))
+        return cast(DistanceSensorData, DistanceSensorData.from_msgpack(self.client.call('getDistanceSensorData', distance_sensor_name, vehicle_name)))
 
     def getLidarData(self, lidar_name = '', vehicle_name = ''):
         """
@@ -665,7 +662,7 @@ class VehicleClient:
         Returns:
             LidarData:
         """
-        return LidarData.from_msgpack(self.client.call('getLidarData', lidar_name, vehicle_name))
+        return cast(LidarData, LidarData.from_msgpack(self.client.call('getLidarData', lidar_name, vehicle_name)))
 
     def simGetLidarSegmentation(self, lidar_name = '', vehicle_name = ''):
         """
@@ -837,7 +834,7 @@ class VehicleClient:
         Set simulated wind, in World frame, NED direction, m/s
 
         Args:
-            wind (Vector3r): Wind, in World frame, NED direction, in m/s 
+            wind (Vector3r): Wind, in World frame, NED direction, in m/s
         """
         self.client.call('simSetWind', wind)
 
@@ -1324,8 +1321,8 @@ class MultirotorClient(VehicleClient, object):
         Returns:
             MultirotorState:
         """
-        return MultirotorState.from_msgpack(self.client.call('getMultirotorState', vehicle_name))
-    getMultirotorState.__annotations__ = {'return': MultirotorState}
+        return cast(MultirotorState, MultirotorState.from_msgpack(self.client.call('getMultirotorState', vehicle_name)))
+
     # query rotor states
     def getRotorStates(self, vehicle_name = ''):
         """
@@ -1338,8 +1335,7 @@ class MultirotorClient(VehicleClient, object):
         Returns:
             RotorStates: Containing a timestamp and the speed, thrust and torque of all rotors.
         """
-        return RotorStates.from_msgpack(self.client.call('getRotorStates', vehicle_name))
-    getRotorStates.__annotations__ = {'return': RotorStates}
+        return cast(RotorStates, RotorStates.from_msgpack(self.client.call('getRotorStates', vehicle_name)))
 
 # -----------------------------------  Car APIs ---------------------------------------------
 class CarClient(VehicleClient, object):
@@ -1365,7 +1361,7 @@ class CarClient(VehicleClient, object):
             CarState:
         """
         state_raw = self.client.call('getCarState', vehicle_name)
-        return CarState.from_msgpack(state_raw)
+        return cast(CarState, CarState.from_msgpack(state_raw))
 
     def getCarControls(self, vehicle_name=''):
         """
@@ -1376,4 +1372,4 @@ class CarClient(VehicleClient, object):
             CarControls:
         """
         controls_raw = self.client.call('getCarControls', vehicle_name)
-        return CarControls.from_msgpack(controls_raw)
+        return cast(CarControls, CarControls.from_msgpack(controls_raw))
